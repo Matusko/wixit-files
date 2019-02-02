@@ -218,6 +218,10 @@ Resources:
                   - "logs:*"
                 Resource:
                   - Fn::Sub: arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/*
+              -
+                Effect: "Allow"
+                Action:
+                  - "cloudformation:ValidateTemplate"
 
   BuildCopyCFNProject:
     Type: AWS::CodeBuild::Project
