@@ -22,6 +22,36 @@ Resources:
       RestApiId: !Ref RestApi
       PathPart: '{proxy+}'
 
+  FilesBucketProxyRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName:
+        Fn::Sub: CodeBuildRole-${AWS::StackName}
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "codebuild.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: /
+      Policies:
+        -
+          PolicyName: "CodeBuildNestedCFNAccessPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: "Allow"
+                Action:
+                  - "cloudformation:Get*"
+                Resource:
+                  - "*"
+
+
   FilesProxyMethod:
     Type: 'AWS::ApiGateway::Method'
     Properties:
@@ -39,6 +69,7 @@ Resources:
         IntegrationHttpMethod: ANY
         Type: AWS
         Uri: !Sub arn:aws:apigateway:${AWS::Region}:s3:path/wixit-files-bucket/{key}
+        Credentials: !Sub arn:aws:iam::${AWS::AccountId}:role/FilesBucketProxyRole
         PassthroughBehavior: WHEN_NO_MATCH
         IntegrationResponses:
           - StatusCode: 200
