@@ -222,6 +222,8 @@ Resources:
                 Effect: "Allow"
                 Action:
                   - "cloudformation:ValidateTemplate"
+                Resource:
+                  - "*"
 
   BuildCopyCFNProject:
     Type: AWS::CodeBuild::Project
