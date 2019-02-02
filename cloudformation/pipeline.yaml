@@ -212,6 +212,12 @@ Resources:
                   - Fn::Sub: arn:aws:s3:::codepipeline-${AWS::Region}-*
                   - Fn::Sub: arn:aws:s3:::${ArtifactStoreS3Location}/*
                   - Fn::Sub: arn:aws:s3:::${ArtifactStoreS3Location}
+              -
+                Effect: "Allow"
+                Action:
+                  - "logs:*"
+                Resource:
+                  - Fn::Sub: arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/*
 
   BuildCopyCFNProject:
     Type: AWS::CodeBuild::Project
