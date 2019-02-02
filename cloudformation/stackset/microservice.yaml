@@ -94,3 +94,4 @@ Resources:
       StageName: dev
       StageDescription:
         LoggingLevel: INFO
+        DataTraceEnabled: true
