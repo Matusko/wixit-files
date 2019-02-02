@@ -177,6 +177,7 @@ Resources:
                   - "apigateway:*"
                 Resource:
                   - Fn::Sub: arn:aws:apigateway:${AWS::Region}::/restapis
+                  - Fn::Sub: arn:aws:apigateway:${AWS::Region}::/restapis/*
               -
                 Effect: "Allow"
                 Action:
