@@ -34,12 +34,14 @@ Resources:
             Principal:
               Service:
                 - "apigateway.amazonaws.com"
+                - "lambda.amazonaws.com"
+                - "s3.amazonaws.com"
             Action:
               - "sts:AssumeRole"
       Path: /
       Policies:
         -
-          PolicyName: "CodeBuildNestedCFNAccessPolicy"
+          PolicyName: "FilesBucketProxyRolePolicy"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
