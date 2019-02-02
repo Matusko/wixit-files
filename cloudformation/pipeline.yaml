@@ -184,6 +184,12 @@ Resources:
                   - "s3:*"
                 Resource:
                   - Fn::Sub: arn:aws:s3:::wixit-files-bucket
+              -
+                Effect: "Allow"
+                Action:
+                  - "iam:*"
+                Resource:
+                  - Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-DEV-FilesBucketProxyRole
   CodeBuildRole:
     Type: "AWS::IAM::Role"
     Properties:
