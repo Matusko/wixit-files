@@ -38,8 +38,7 @@ Resources:
           integration.request.path.key: method.request.querystring.key
         IntegrationHttpMethod: ANY
         Type: AWS
-        Uri:
-          - Fn::Sub: arn:aws:apigateway:${AWS::Region}:s3:path/wixit-files-bucket/{key}
+        Uri: !Sub arn:aws:apigateway:${AWS::Region}:s3:path/wixit-files-bucket/{key}
         PassthroughBehavior: WHEN_NO_MATCH
         IntegrationResponses:
           - StatusCode: 200
