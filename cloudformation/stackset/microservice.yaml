@@ -8,7 +8,7 @@ Resources:
     Properties:
       AccessControl: PublicReadWrite
       BucketName:
-        Fn::Sub: ${AWS::StackName}-files-bucket
+        Fn::Sub: wixit-files-bucket
 
   RestApi:
     Type: AWS::ApiGateway::RestApi
