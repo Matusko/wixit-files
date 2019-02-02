@@ -7,8 +7,7 @@ Resources:
     Type: 'AWS::S3::Bucket'
     Properties:
       AccessControl: PublicReadWrite
-      BucketName:
-        Fn::Sub: wixit-files-bucket
+      BucketName: wixit-files-bucket
 
   RestApi:
     Type: AWS::ApiGateway::RestApi

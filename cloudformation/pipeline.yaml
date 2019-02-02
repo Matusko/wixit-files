@@ -177,6 +177,12 @@ Resources:
                   - "apigateway:*"
                 Resource:
                   - Fn::Sub: arn:aws:apigateway:${AWS::Region}::/restapis
+              -
+                Effect: "Allow"
+                Action:
+                  - "s3:*"
+                Resource:
+                  - Fn::Sub: arn:aws:s3:::wixit-files-bucket
   CodeBuildRole:
     Type: "AWS::IAM::Role"
     Properties:
