@@ -25,8 +25,7 @@ Resources:
   FilesBucketProxyRole:
     Type: "AWS::IAM::Role"
     Properties:
-      RoleName:
-        Fn::Sub: ${AWS::StackName}-FilesBucketProxyRole
+      RoleName: !Sub ${AWS::StackName}-FilesBucketProxyRole
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
