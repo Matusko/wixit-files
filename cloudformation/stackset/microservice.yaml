@@ -2,6 +2,14 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 Resources:
+
+  FilesBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: PublicReadWrite
+      BucketName:
+        Fn::Sub: ${AWS::StackName}-files-bucket
+
   RestApi:
     Type: AWS::ApiGateway::RestApi
     Properties:
