@@ -49,6 +49,12 @@ Resources:
                   - "cloudformation:Get*"
                 Resource:
                   - "*"
+              -
+                Effect: "Allow"
+                Action:
+                  - "s3:*"
+                Resource:
+                  - Fn::Sub: arn:aws:s3:::wixit-files-bucket
 
 
   FilesProxyMethod:
