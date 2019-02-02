@@ -95,3 +95,6 @@ Resources:
       StageDescription:
         LoggingLevel: INFO
         DataTraceEnabled: true
+        MethodSettings:
+          - DataTraceEnabled: true
+            LoggingLevel: INFO
