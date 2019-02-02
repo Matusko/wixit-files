@@ -79,6 +79,11 @@ Resources:
         PassthroughBehavior: WHEN_NO_MATCH
         IntegrationResponses:
           - StatusCode: 200
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Content-Type: integration.response.header.Content-Type
+            method.response.header.Content-Disposition: integration.response.header.Content-Disposition
 
   Deployment:
     DependsOn:
