@@ -171,6 +171,12 @@ Resources:
                 Resource:
                   - Fn::Sub: arn:aws:s3:::${ArtifactStoreS3Location}
                   - Fn::Sub: arn:aws:s3:::${ArtifactStoreS3Location}/*
+              -
+                Effect: "Allow"
+                Action:
+                  - "apigateway:*"
+                Resource:
+                  - Fn::Sub: arn:aws:apigateway:${AWS::Region}::/restapis
   CodeBuildRole:
     Type: "AWS::IAM::Role"
     Properties:
