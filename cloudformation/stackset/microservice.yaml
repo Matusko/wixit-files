@@ -15,3 +15,40 @@ Resources:
       Description: "A test API"
       Name: RestApi
 
+  FilesResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt RestApi.RootResourceId
+      RestApiId: !Ref RestApi
+      PathPart: '{proxy+}'
+
+  FilesProxyMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: ANY
+      ResourceId: !Ref FilesResource
+      RestApiId: !Ref RestApi
+      AuthorizationType: NONE
+      RequestParameters:
+        method.request.querystring.key: false
+      Integration:
+        CacheKeyParameters:
+          - 'method.request.path.proxy'
+        RequestParameters:
+          integration.request.path.key: method.request.querystring.key
+        IntegrationHttpMethod: ANY
+        Type: AWS
+        Uri: !Sub
+          - ${BucketArn}/{key}
+          - { BucketArn: !GetAtt FilesBucket.Arn}
+        PassthroughBehavior: WHEN_NO_MATCH
+        IntegrationResponses:
+          - StatusCode: 200
+
+  Deployment:
+    DependsOn:
+      - FilesProxyMethod
+    Type: 'AWS::ApiGateway::Deployment'
+    Properties:
+      RestApiId: !Ref RestApi
+      StageName: dev
