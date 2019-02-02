@@ -270,11 +270,11 @@ Resources:
       BucketName: !Ref ArtifactStoreS3Location
 
 
-  DeployPipeline:
+  Pipeline:
     Type: "AWS::CodePipeline::Pipeline"
     Properties:
       Name:
-        Fn::Sub: ContinuousDeliveryNestedCFN-${AWS::StackName}
+        Fn::Sub: ${AWS::StackName}-Pipeline
       RoleArn:
         Fn::GetAtt: [ CodePipelineRole, Arn ]
       Stages:
