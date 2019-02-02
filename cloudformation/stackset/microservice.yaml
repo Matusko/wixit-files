@@ -58,7 +58,6 @@ Resources:
                 Resource:
                   - Fn::Sub: arn:aws:s3:::wixit-files-bucket
 
-
   FilesProxyMethod:
     Type: 'AWS::ApiGateway::Method'
     Properties:
@@ -76,7 +75,7 @@ Resources:
         IntegrationHttpMethod: ANY
         Type: AWS
         Uri: !Sub arn:aws:apigateway:${AWS::Region}:s3:path/wixit-files-bucket/{key}
-        Credentials: !Sub arn:aws:iam::${AWS::AccountId}:role/FilesBucketProxyRole
+        Credentials: !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-FilesBucketProxyRole
         PassthroughBehavior: WHEN_NO_MATCH
         IntegrationResponses:
           - StatusCode: 200
