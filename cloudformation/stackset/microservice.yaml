@@ -92,3 +92,5 @@ Resources:
     Properties:
       RestApiId: !Ref RestApi
       StageName: dev
+      StageDescription:
+        LoggingLevel: INFO
