@@ -20,7 +20,7 @@ Resources:
     Properties:
       ParentId: !GetAtt RestApi.RootResourceId
       RestApiId: !Ref RestApi
-      PathPart: '{proxy+}'
+      PathPart: '{key+}'
 
   FilesBucketProxyRole:
     Type: "AWS::IAM::Role"
