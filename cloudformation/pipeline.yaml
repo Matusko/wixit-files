@@ -191,6 +191,7 @@ Resources:
                 Resource:
                   - Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/FilesBucketProxyRole
                   - Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-DEV-FilesBucketProxyRole
+                  - Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-DEV-CloudWatchRole*
   CodeBuildRole:
     Type: "AWS::IAM::Role"
     Properties:
