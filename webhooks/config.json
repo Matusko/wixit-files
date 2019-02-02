@@ -1,0 +1,5 @@
+{
+  "params": "cloudformation/params-template.json",
+  "template": "cloudformation/pipeline.yaml",
+  "infrastructure": ""
+}
