@@ -59,12 +59,12 @@ Resources:
       RestApiId: !Ref RestApi
       AuthorizationType: NONE
       RequestParameters:
-        method.request.querystring.key: false
+        method.request.path.key: false
       Integration:
         CacheKeyParameters:
-          - 'method.request.path.proxy'
+          - 'method.request.path.key'
         RequestParameters:
-          integration.request.path.key: method.request.querystring.key
+          integration.request.path.key: method.request.path.key
         IntegrationHttpMethod: ANY
         Type: AWS
         Uri: !Sub arn:aws:apigateway:${AWS::Region}:s3:path/wixit-files-bucket/{key}
