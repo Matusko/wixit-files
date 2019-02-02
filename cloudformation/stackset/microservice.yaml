@@ -5,8 +5,6 @@ Resources:
   RestApi:
     Type: AWS::ApiGateway::RestApi
     Properties:
-      Body:
-        OpenAPI specification
       Description: "A test API"
       Name: RestApi
 
