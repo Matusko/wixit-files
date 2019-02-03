@@ -69,7 +69,9 @@ Resources:
       HttpMethod: ANY
       ResourceId: !Ref FilesResource
       RestApiId: !Ref RestApi
-      AuthorizationType: NONE
+      ApiKeyRequired: false
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref FilesProxyMethodAuthorizer
       RequestParameters:
         method.request.path.key: false
       Integration:
@@ -169,3 +171,18 @@ Resources:
       Environment:
         Variables:
           FUNCTION_NAME: reverseString
+
+  FilesProxyMethodAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      AuthorizerResultTtlInSeconds: 300
+      AuthorizerUri:
+        Fn::Sub:
+          - arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${LambdaArn}/invocations
+          - { LambdaArn: !Ref AuthorizerLambda }
+      IdentitySource: method.request.header.Authorization
+      IdentityValidationExpression: ^Bearer.+
+      Name: FilesProxyMethodAuthorizer
+      RestApiId:
+        Ref: !Ref RestApi
+      Type: TOKEN
