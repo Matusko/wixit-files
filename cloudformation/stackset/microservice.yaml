@@ -166,4 +166,5 @@ Resources:
       Runtime: java8
       Timeout: 180
       Environment:
-        FUNCTION_NAME: reverseString
+        Variables:
+          FUNCTION_NAME: reverseString
