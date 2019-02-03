@@ -165,6 +165,7 @@ Resources:
         S3Key: lambdas/wixit-files-authorizer-0.0.1-SNAPSHOT-aws.jar
       Runtime: java8
       Timeout: 180
+      MemorySize: 256
       Environment:
         Variables:
           FUNCTION_NAME: reverseString
