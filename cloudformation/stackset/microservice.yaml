@@ -183,6 +183,5 @@ Resources:
       IdentitySource: method.request.header.Authorization
       IdentityValidationExpression: ^Bearer.+
       Name: FilesProxyMethodAuthorizer
-      RestApiId:
-        Ref: !Ref RestApi
+      RestApiId: !Ref RestApi
       Type: TOKEN
