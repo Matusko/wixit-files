@@ -71,6 +71,7 @@ Resources:
       RequestParameters:
         method.request.path.key: false
       Integration:
+        ContentHandling: CONVERT_TO_BINARY
         CacheKeyParameters:
           - 'method.request.path.key'
         RequestParameters:
