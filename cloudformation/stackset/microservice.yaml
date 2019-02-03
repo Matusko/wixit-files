@@ -16,6 +16,7 @@ Resources:
       Name: RestApi
       BinaryMediaTypes:
         - image/jpg
+        - image/jpeg
 
   FilesResource:
     Type: 'AWS::ApiGateway::Resource'
