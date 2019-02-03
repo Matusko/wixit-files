@@ -180,6 +180,11 @@ Resources:
                   - Fn::Sub: arn:aws:apigateway:${AWS::Region}::/restapis/*
                   - Fn::Sub: arn:aws:apigateway:${AWS::Region}::/account
                   - Fn::Sub: arn:aws:apigateway:${AWS::Region}::/account/*
+              - Effect: "Allow"
+                Action:
+                  - "lambda:*"
+                Resource:
+                  - Fn::Sub: arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AWS::StackName}-DEV-AuthorizerLambda*
               -
                 Effect: "Allow"
                 Action:
