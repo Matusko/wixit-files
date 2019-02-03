@@ -77,16 +77,13 @@ Resources:
           - 'method.request.path.key'
         RequestParameters:
           integration.request.path.key: method.request.path.key
-          integration.request.header.Content-Type: "'*/*'"
         IntegrationHttpMethod: ANY
         Type: AWS
         Uri: !Sub arn:aws:apigateway:${AWS::Region}:s3:path/wixit-files-bucket/{key}
         Credentials: !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-FilesBucketProxyRole
         PassthroughBehavior: WHEN_NO_MATCH
-        ContentHandling: CONVERT_TO_BINARY
         IntegrationResponses:
           - StatusCode: 200
-            ContentHandling: CONVERT_TO_BINARY
             ResponseParameters:
               method.response.header.Content-Type: integration.response.header.Content-Type
               method.response.header.Content-Disposition: integration.response.header.Content-Disposition
