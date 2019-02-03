@@ -82,6 +82,7 @@ Resources:
         Uri: !Sub arn:aws:apigateway:${AWS::Region}:s3:path/wixit-files-bucket/{key}
         Credentials: !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-FilesBucketProxyRole
         PassthroughBehavior: WHEN_NO_MATCH
+        ContentHandling: CONVERT_TO_BINARY
         IntegrationResponses:
           - StatusCode: 200
             ContentHandling: CONVERT_TO_BINARY
