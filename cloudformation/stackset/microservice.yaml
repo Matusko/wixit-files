@@ -17,6 +17,8 @@ Resources:
       BinaryMediaTypes:
         - image/jpg
         - image/jpeg
+        - image/apng
+        - image/webp
 
   FilesResource:
     Type: 'AWS::ApiGateway::Resource'
@@ -71,7 +73,6 @@ Resources:
       RequestParameters:
         method.request.path.key: false
       Integration:
-        ContentHandling: CONVERT_TO_BINARY
         CacheKeyParameters:
           - 'method.request.path.key'
         RequestParameters:
