@@ -14,6 +14,8 @@ Resources:
     Properties:
       Description: "A test API"
       Name: RestApi
+      BinaryMediaTypes:
+        - image/jpg
 
   FilesResource:
     Type: 'AWS::ApiGateway::Resource'
@@ -99,10 +101,10 @@ Resources:
       MethodSettings:
         - DataTraceEnabled: true
           HttpMethod: "*"
-          LoggingLevel: INFO
+          LoggingLevel: ERROR
           ResourcePath: "/*"
       RestApiId: !Ref RestApi
-      StageName: dev
+      StageName: main
 
   CloudWatchRole:
     Type: AWS::IAM::Role
