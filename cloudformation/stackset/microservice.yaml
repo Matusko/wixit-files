@@ -178,7 +178,7 @@ Resources:
       AuthorizerResultTtlInSeconds: 300
       AuthorizerUri:
         Fn::Sub:
-          - arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${LambdaArn}/invocations
+          - !Sub arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${LambdaArn}/invocations
           - { LambdaArn: !Ref AuthorizerLambda }
       IdentitySource: method.request.header.Authorization
       IdentityValidationExpression: ^Bearer.+
