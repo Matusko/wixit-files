@@ -130,7 +130,40 @@ Resources:
   Account:
     Type: AWS::ApiGateway::Account
     Properties:
-      CloudWatchRoleArn:
-        "Fn::GetAtt":
-          - CloudWatchRole
-          - Arn
+      CloudWatchRoleArn: !GetAtt CloudWatchRole.Arn
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:*
+                Resource: arn:aws:logs:*:*:*
+
+  AuthorizerLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: sk.matusko.wixit.files.authorizer.StringReverseHandler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: wixit-files-wxfile1-artifacts
+        S3Key: lambdas/wixit-files-authorizer-0.0.1-SNAPSHOT-aws.jar
+      Runtime: java8
+      Timeout: 180
+      Environment:
+        FUNCTION_NAME: reverseString

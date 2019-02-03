@@ -12,6 +12,11 @@ phases:
           aws cloudformation validate-template --template-body file://$cfn_template
         done
 
+  build:
+    commands:
+      - mvn clean install
+      - aws s3 cp "target/wixit-files-authorizer-0.0.1-SNAPSHOT-aws.jar" "s3://wixit-files-wxfile1-artifacts/lambdas/wixit-files-authorizer-0.0.1-SNAPSHOT-aws.jar"
+
 artifacts:
   files:
     - cloudformation/stackset/microservice.yaml
