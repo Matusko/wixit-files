@@ -77,6 +77,7 @@ Resources:
           - 'method.request.path.key'
         RequestParameters:
           integration.request.path.key: method.request.path.key
+          integration.request.header.accept: "'image/*'"
         IntegrationHttpMethod: ANY
         Type: AWS
         Uri: !Sub arn:aws:apigateway:${AWS::Region}:s3:path/wixit-files-bucket/{key}
