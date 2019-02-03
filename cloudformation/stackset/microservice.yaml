@@ -173,13 +173,12 @@ Resources:
           FUNCTION_NAME: reverseString
 
   FilesProxyMethodAuthorizer:
+    DependsOn:
+      - AuthorizerLambda
     Type: AWS::ApiGateway::Authorizer
     Properties:
       AuthorizerResultTtlInSeconds: 300
-      AuthorizerUri:
-        Fn::Sub:
-          - arn:aws:apigateway:${AWS::Region}:lambda:path//2015-03-31/functions/${LambdaArn}/invocations
-          - { LambdaArn: !Ref AuthorizerLambda}
+      AuthorizerUri: !Sub arn:aws:apigateway:${AWS::Region}:path//2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:wixit-files-wxfile1-DEV-AuthorizerLambda-1CO5I8DLXLZ09/invocations
       IdentitySource: method.request.header.Authorization
       IdentityValidationExpression: ^Bearer.+
       Name: FilesProxyMethodAuthorizer
