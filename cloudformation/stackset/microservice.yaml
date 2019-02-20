@@ -62,12 +62,6 @@ Resources:
                   - "s3:*"
                 Resource:
                   - Fn::Sub: arn:aws:s3:::wixit-files-bucket
-              - Effect: Allow
-                Action:
-                  - 'lambda:InvokeAsync'
-                  - 'lambda:InvokeFunction'
-                Resource:
-                  - '*'
 
   FilesProxyMethod:
     Type: 'AWS::ApiGateway::Method'
@@ -177,6 +171,16 @@ Resources:
       Environment:
         Variables:
           FUNCTION_NAME: reverseString
+
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt
+        - AuthorizerLambda
+        - Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/main/*
 
   FilesProxyMethodAuthorizer:
     DependsOn:
