@@ -43,7 +43,6 @@ Resources:
                 - "s3.amazonaws.com"
             Action:
               - "sts:AssumeRole"
-              - execute-api:Invoke
 
       Path: /
       Policies:
@@ -64,6 +63,12 @@ Resources:
                   - "s3:*"
                 Resource:
                   - Fn::Sub: arn:aws:s3:::wixit-files-bucket
+              -
+                Effect: "Allow"
+                Action:
+                  - '*'
+                Resource:
+                  - '*'
 
   FilesProxyMethod:
     Type: 'AWS::ApiGateway::Method'
@@ -148,12 +153,7 @@ Resources:
                 - lambda.amazonaws.com
             Action:
               - sts:AssumeRole
-          - Effect: Allow
-            Principal:
-              Service:
-                - apigateway.amazonaws.com
-            Action:
-              - execute-api:Invoke
+
       Path: "/"
       Policies:
         - PolicyName: root
@@ -164,6 +164,12 @@ Resources:
                 Action:
                   - logs:*
                 Resource: arn:aws:logs:*:*:*
+              -
+                Effect: "Allow"
+                Action:
+                  - '*'
+                Resource:
+                  - '*'
 
   AuthorizerLambda:
     Type: AWS::Lambda::Function
