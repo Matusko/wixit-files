@@ -43,10 +43,8 @@ Resources:
                 - "s3.amazonaws.com"
             Action:
               - "sts:AssumeRole"
-          - Effect: Allow
-            Resource: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/main/*
-            Action:
               - execute-api:Invoke
+
       Path: /
       Policies:
         -
@@ -151,7 +149,9 @@ Resources:
             Action:
               - sts:AssumeRole
           - Effect: Allow
-            Resource: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/main/*
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
             Action:
               - execute-api:Invoke
       Path: "/"
