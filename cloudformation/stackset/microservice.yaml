@@ -177,7 +177,7 @@ Resources:
   AuthorizerLambda:
     Type: AWS::Lambda::Function
     Properties:
-      Handler: sk.matusko.wixit.files.authorizer.StringReverseHandler
+      Handler: sk.matusko.wixit.files.authorizer.AuthorizeHandler
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         S3Bucket: wixit-files-wxfile1-artifacts
@@ -187,7 +187,7 @@ Resources:
       MemorySize: 256
       Environment:
         Variables:
-          FUNCTION_NAME: reverseString
+          FUNCTION_NAME: authorize
 
   LambdaInvokePermission:
     Type: AWS::Lambda::Permission
