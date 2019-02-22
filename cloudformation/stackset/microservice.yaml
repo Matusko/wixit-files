@@ -153,6 +153,8 @@ Resources:
                 - lambda.amazonaws.com
             Action:
               - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 
       Path: "/"
       Policies:
@@ -203,8 +205,36 @@ Resources:
     Properties:
       AuthorizerResultTtlInSeconds: 300
       AuthorizerUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthorizerLambda.Arn}/invocations
+      AuthorizerCredentials: !Sub ${ApiGatewayAuthorizerRole.Arn}
       IdentitySource: method.request.header.Authorization
       IdentityValidationExpression: ^Bearer.+
       Name: FilesProxyMethodAuthorizer
       RestApiId: !Ref RestApi
       Type: TOKEN
+
+  ApiGatewayAuthorizerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "apigateway.amazonaws.com"
+            Action:
+              - sts:AssumeRole
+      Policies:
+        -
+          PolicyName: "InvokeAuthorizerFunction"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: "Allow"
+                Action:
+                  - lambda:InvokeAsync
+                  - lambda:InvokeFunction
+                Resource:
+                  Fn::Sub: ${AuthorizerLambda.Arn}
