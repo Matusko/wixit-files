@@ -171,6 +171,36 @@ Resources:
                 Resource:
                   - Fn::Sub: arn:aws:s3:::${ArtifactStoreS3Location}
                   - Fn::Sub: arn:aws:s3:::${ArtifactStoreS3Location}/*
+              -
+                Effect: "Allow"
+                Action:
+                  - "apigateway:*"
+                Resource:
+                  - Fn::Sub: arn:aws:apigateway:${AWS::Region}::/restapis
+                  - Fn::Sub: arn:aws:apigateway:${AWS::Region}::/restapis/*
+                  - Fn::Sub: arn:aws:apigateway:${AWS::Region}::/account
+                  - Fn::Sub: arn:aws:apigateway:${AWS::Region}::/account/*
+              - Effect: "Allow"
+                Action:
+                  - "lambda:*"
+                Resource:
+                  - Fn::Sub: arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AWS::StackName}-DEV-AuthorizerLambda*
+              -
+                Effect: "Allow"
+                Action:
+                  - "s3:*"
+                Resource:
+                  - Fn::Sub: arn:aws:s3:::wixit-files-bucket
+              -
+                Effect: "Allow"
+                Action:
+                  - "iam:*"
+                Resource:
+                  - Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/FilesBucketProxyRole
+                  - Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-DEV-FilesBucketProxyRole
+                  - Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-DEV-CloudWatchRole*
+                  - Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-DEV-LambdaExecutionRole*
+                  - Fn::Sub: arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-DEV-ApiGatewayAuthorizerRole*
   CodeBuildRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -212,6 +242,18 @@ Resources:
                   - Fn::Sub: arn:aws:s3:::codepipeline-${AWS::Region}-*
                   - Fn::Sub: arn:aws:s3:::${ArtifactStoreS3Location}/*
                   - Fn::Sub: arn:aws:s3:::${ArtifactStoreS3Location}
+              -
+                Effect: "Allow"
+                Action:
+                  - "logs:*"
+                Resource:
+                  - Fn::Sub: arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/*
+              -
+                Effect: "Allow"
+                Action:
+                  - "cloudformation:ValidateTemplate"
+                Resource:
+                  - "*"
 
   BuildCopyCFNProject:
     Type: AWS::CodeBuild::Project
@@ -238,11 +280,11 @@ Resources:
       BucketName: !Ref ArtifactStoreS3Location
 
 
-  DeployPipeline:
+  Pipeline:
     Type: "AWS::CodePipeline::Pipeline"
     Properties:
       Name:
-        Fn::Sub: ContinuousDeliveryNestedCFN-${AWS::StackName}
+        Fn::Sub: ${AWS::StackName}-Pipeline
       RoleArn:
         Fn::GetAtt: [ CodePipelineRole, Arn ]
       Stages:

@@ -2,11 +2,228 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 Resources:
+
+  FilesBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: PublicReadWrite
+      BucketName: wixit-files-bucket
+
   RestApi:
     Type: AWS::ApiGateway::RestApi
     Properties:
-      Body:
-        OpenAPI specification
       Description: "A test API"
       Name: RestApi
+      BinaryMediaTypes:
+        - image/jpg
+        - image/jpeg
+        - image/apng
+        - image/webp
 
+  FilesResource:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: !GetAtt RestApi.RootResourceId
+      RestApiId: !Ref RestApi
+      PathPart: '{key+}'
+
+  FilesBucketProxyRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Sub ${AWS::StackName}-FilesBucketProxyRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "apigateway.amazonaws.com"
+                - "lambda.amazonaws.com"
+                - "s3.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+
+      Path: /
+      Policies:
+        -
+          PolicyName: "FilesBucketProxyRolePolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: "Allow"
+                Action:
+                  - "cloudformation:Get*"
+                Resource:
+                  - "*"
+              -
+                Effect: "Allow"
+                Action:
+                  - "s3:*"
+                Resource:
+                  - Fn::Sub: arn:aws:s3:::wixit-files-bucket
+              -
+                Effect: "Allow"
+                Action:
+                  - '*'
+                Resource:
+                  - '*'
+
+  FilesProxyMethod:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: ANY
+      ResourceId: !Ref FilesResource
+      RestApiId: !Ref RestApi
+      ApiKeyRequired: false
+      AuthorizationType: CUSTOM
+      AuthorizerId: !Ref FilesProxyMethodAuthorizer
+      RequestParameters:
+        method.request.path.key: false
+      Integration:
+        CacheKeyParameters:
+          - 'method.request.path.key'
+        RequestParameters:
+          integration.request.path.key: method.request.path.key
+        IntegrationHttpMethod: ANY
+        Type: AWS
+        Uri: !Sub arn:aws:apigateway:${AWS::Region}:s3:path/wixit-files-bucket/{key}
+        Credentials: !Sub arn:aws:iam::${AWS::AccountId}:role/${AWS::StackName}-FilesBucketProxyRole
+        PassthroughBehavior: WHEN_NO_MATCH
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Content-Type: integration.response.header.Content-Type
+              method.response.header.Content-Disposition: integration.response.header.Content-Disposition
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Content-Type: integration.response.header.Content-Type
+            method.response.header.Content-Disposition: integration.response.header.Content-Disposition
+
+  Deployment:
+    DependsOn:
+      - FilesProxyMethod
+    Type: 'AWS::ApiGateway::Deployment'
+    Properties:
+      RestApiId: !Ref RestApi
+
+  DevStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref Deployment
+      MethodSettings:
+        - DataTraceEnabled: true
+          HttpMethod: "*"
+          LoggingLevel: ERROR
+          ResourcePath: "/*"
+      RestApiId: !Ref RestApi
+      StageName: main
+
+  CloudWatchRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - "apigateway.amazonaws.com"
+            Action: "sts:AssumeRole"
+      Path: "/"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+
+  Account:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn: !GetAtt CloudWatchRole.Arn
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Path: "/"
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:*
+                Resource: arn:aws:logs:*:*:*
+              -
+                Effect: "Allow"
+                Action:
+                  - '*'
+                Resource:
+                  - '*'
+
+  AuthorizerLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: sk.matusko.wixit.files.authorizer.AuthorizeHandler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: wixit-files-wxfile1-artifacts
+        S3Key: lambdas/wixit-files-authorizer-0.0.1-SNAPSHOT-aws.jar
+      Runtime: java8
+      Timeout: 180
+      MemorySize: 256
+      Environment:
+        Variables:
+          FUNCTION_NAME: authorize
+
+  FilesProxyMethodAuthorizer:
+    DependsOn:
+      - AuthorizerLambda
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      AuthorizerResultTtlInSeconds: 0
+      AuthorizerUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthorizerLambda.Arn}/invocations
+      AuthorizerCredentials: !Sub ${ApiGatewayAuthorizerRole.Arn}
+      IdentitySource: method.request.header.Authorization
+      IdentityValidationExpression: ^Bearer.+
+      Name: FilesProxyMethodAuthorizer
+      RestApiId: !Ref RestApi
+      Type: TOKEN
+
+  ApiGatewayAuthorizerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "apigateway.amazonaws.com"
+            Action:
+              - sts:AssumeRole
+      Policies:
+        -
+          PolicyName: "InvokeAuthorizerFunction"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              -
+                Effect: "Allow"
+                Action:
+                  - lambda:InvokeAsync
+                  - lambda:InvokeFunction
+                Resource:
+                  Fn::Sub: ${AuthorizerLambda.Arn}
