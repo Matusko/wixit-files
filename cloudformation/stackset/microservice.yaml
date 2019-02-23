@@ -72,8 +72,6 @@ Resources:
 
   FilesProxyMethod:
     Type: 'AWS::ApiGateway::Method'
-    DependsOn:
-      - LambdaInvokePermission
     Properties:
       HttpMethod: ANY
       ResourceId: !Ref FilesResource
