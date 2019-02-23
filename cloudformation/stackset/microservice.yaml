@@ -204,7 +204,7 @@ Resources:
       - AuthorizerLambda
     Type: AWS::ApiGateway::Authorizer
     Properties:
-      AuthorizerResultTtlInSeconds: 300
+      AuthorizerResultTtlInSeconds: 0
       AuthorizerUri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthorizerLambda.Arn}/invocations
       AuthorizerCredentials: !Sub ${ApiGatewayAuthorizerRole.Arn}
       IdentitySource: method.request.header.Authorization

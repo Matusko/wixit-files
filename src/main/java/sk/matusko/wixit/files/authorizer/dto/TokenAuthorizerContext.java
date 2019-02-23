@@ -9,12 +9,16 @@
  */
 package sk.matusko.wixit.files.authorizer.dto;
 
+import lombok.ToString;
+
 /**
  * Object representation of input to an implementation of an API Gateway custom authorizer
  * of type TOKEN
  *
  * @author Jack Kohn
  */
+
+@ToString
 public class TokenAuthorizerContext {
 
     String type;

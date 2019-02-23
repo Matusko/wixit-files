@@ -9,6 +9,8 @@
  */
 package sk.matusko.wixit.files.authorizer.dto;
 
+import lombok.ToString;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,6 +28,8 @@ import java.util.Map;
  *
  * @author Jack Kohn
  */
+
+@ToString
 public class AuthPolicy {
 
     // IAM Policy Constants
@@ -76,7 +80,6 @@ public class AuthPolicy {
             serializableStatement.put(EFFECT, statement.Effect);
             serializableStatement.put(ACTION, statement.Action);
             serializableStatement.put(RESOURCE, statement.getResource());
-            serializableStatement.put(CONDITION, statement.getCondition());
             serializableStatementArray[i] = serializableStatement;
         }
         serializablePolicy.put(STATEMENT, serializableStatementArray);
@@ -97,6 +100,8 @@ public class AuthPolicy {
      *   the RestApi identifier
      *   and the Stage on the RestApi that the Policy will apply to
      */
+
+    @ToString
     public static class PolicyDocument {
 
         static final String EXECUTE_API_ARN_FORMAT = "arn:aws:execute-api:%s:%s:%s/%s/%s/%s";
@@ -170,7 +175,7 @@ public class AuthPolicy {
             }
             String resource = resourcePath.startsWith("/") ? resourcePath.substring(1) : resourcePath;
             String method = httpMethod == HttpMethod.ALL ? "*" : httpMethod.toString();
-            statement.addResource(String.format(EXECUTE_API_ARN_FORMAT, region, awsAccountId, restApiId, stage, method, resource));
+            statement.setResource(String.format(EXECUTE_API_ARN_FORMAT, region, awsAccountId, restApiId, stage, method, resource));
         }
 
         // Static methods
@@ -225,27 +230,25 @@ public class AuthPolicy {
         GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS, ALL
     }
 
+    @ToString
     public static class Statement {
 
         String Effect;
         String Action;
-        Map<String, Map<String, Object>> Condition;
-
-        private List<String> resourceList;
+        String Resource;
 
         public Statement() {
 
         }
 
-        public Statement(String effect, String action, List<String> resourceList, Map<String, Map<String, Object>> condition) {
+        public Statement(String effect, String action, String resource) {
             this.Effect = effect;
             this.Action = action;
-            this.resourceList = resourceList;
-            this.Condition = condition;
+            this.Resource = resource;
         }
 
         public static Statement getEmptyInvokeStatement(String effect) {
-            return new Statement(effect, "execute-api:Invoke", new ArrayList<>(), new HashMap<>());
+            return new Statement(effect, "execute-api:Invoke", "");
         }
 
         public String getEffect() {
@@ -264,20 +267,12 @@ public class AuthPolicy {
             this.Action = action;
         }
 
-        public String[] getResource() {
-            return resourceList.toArray(new String[resourceList.size()]);
+        public String getResource() {
+            return Resource;
         }
 
-        public void addResource(String resource) {
-            resourceList.add(resource);
-        }
-
-        public Map<String, Map<String,Object>> getCondition() {
-            return Condition;
-        }
-
-        public void addCondition(String operator, String key, Object value) {
-            Condition.put(operator, Collections.singletonMap(key, value));
+        public void setResource(String resource) {
+            this.Resource = resource;
         }
 
     }
