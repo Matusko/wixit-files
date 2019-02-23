@@ -189,16 +189,6 @@ Resources:
         Variables:
           FUNCTION_NAME: authorize
 
-  LambdaInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !GetAtt
-        - AuthorizerLambda
-        - Arn
-      Action: 'lambda:InvokeFunction'
-      Principal: apigateway.amazonaws.com
-      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RestApi}/*
-
   FilesProxyMethodAuthorizer:
     DependsOn:
       - AuthorizerLambda
